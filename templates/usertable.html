@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+  {% block link %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css">
+  {%endblock%}
+  {% block content %}
+  <div class="main-panel">
+    <div class="content-wrapper">
+      <div class="container">
+        <a href="/admin1/adduser/"><button >Adduser</button></a>
+        <table id="tab" class="table">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Firstname</th>
+                <th scope="col">Lastname</th>
+                <th scope="col">Username</th>
+                <th scope="col">Email</th>
+                <th scope="col">Phone</th>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for data in user %} 
+              <tr>
+                  <th scope="row">{{data.user.id}}</th>
+                  <td>{{data.user.first_name}}</td>
+                  <td>{{data.user.last_name}}</td>
+                  <td>{{data.user.username}}</td>
+                  <td>{{data.user.email}}</td>
+                  <td>{{data.phone}}</td>
+                
+                  <!-- <td><a href="/admin1/adminedit/{{data.user.id}}/"><button type="button" class="btn btn-success badge-pill" style="width: 80px;">Edit</button> </a></td>  -->
+                  {% if data.user.is_active %}
+                  <td><a href="/admin1/user_block/{{data.user.id}}"><button type="button" class="btn btn-danger badge-pill" style="width: 80px;">Block </button></a></td>
+                
+                {% else %}
+                <td><a href="/admin1/user_block/{{data.user.id}}"><button type="button" class="btn btn-primary badge-pill" style="width: 80px;">Unblock </button></a></td>
+                {% endif %}
+                </tr>
+              {% endfor %} 
+            </tbody>  
+        </table>
+      </div>
+    </div>
+  </div>
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>    
+<script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.23/js/dataTables.bootstrap4.min.js"></script> 
+
+<script>
+    $(document).ready(function(){
+        $('#tab').DataTable();
+    });
+</script>
+{% endblock %}

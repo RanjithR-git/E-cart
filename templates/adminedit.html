@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {font-family: Arial, Helvetica, sans-serif;}
+        form {border: 3px solid #f1f1f1;}
+        
+        input[type=text], input[type=password] {
+          width: 100%;
+          padding: 12px 20px;
+          margin: 8px 0;
+          display: inline-block;
+          border: 1px solid #ccc;
+          box-sizing: border-box;
+        }
+        
+        button {
+          background-color: #1877f2;
+          color: white;
+          padding: 14px 20px;
+          margin: 8px 0;
+          border: none;
+          cursor: pointer;
+          width: 100%;
+        }
+        
+        button:hover {
+          opacity: 0.8;
+        }
+        
+        .cancelbtn {
+          width: auto;
+          padding: 10px 18px;
+          background-color: #f44336;
+        }
+        
+        .imgcontainer {
+          text-align: center;
+          margin: 24px 0 12px 0;
+        }
+        
+        img.avatar {
+          width: 40%;
+          border-radius: 50%;
+        }
+        
+        .container {
+          padding: 16px;
+        }
+        
+        span.psw {
+          float: right;
+          padding-top: 16px;
+        }
+        
+        /* Change styles for span and cancel button on extra small screens */
+        @media screen and (max-width: 300px) {
+          span.psw {
+             display: block;
+             float: none;
+          }
+          .cancelbtn {
+             width: 100%;
+          }
+        }
+        </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>User Edit</h2>
+
+<form method="POST" action="/adminedit/{{user.id}}/">
+  {% csrf_token %}
+  <div class="container">
+
+    
+    <label for="uname"><b>Firstname</b></label>
+    <input type="text"  id="first_name" value="{{user.user.first_name}}">
+
+    <label for="psw"><b>Lastname</b></label>
+    <input type="text"  id="last_name" value="{{user.user.last_name}}" >
+
+    <label for="uname"><b>Username</b></label>
+    <input type="text"  id="username"  value="{{user.user.username}}">
+
+    <label for="uname"><b>Email</b></label>
+    <input type="text" id="username"  value="{{user.user.email}}">
+
+    <label for="uname"><b>Phone</b></label>
+    <input type="text"  id="phone"  value="{{user.phone}}">
+    
+    
+    <button type="button" id="btn" >Edit</button>
+     <span id="span"></span><br>
+  </div>
+
+  <div class="container" style="background-color:#f1f1f1">
+    
+  </div>
+</form>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+ <script>
+  $('#btn').click(function(){
+    var first_name=$('#first_name').val()
+    var last_name=$('#last_name').val()
+    var username=$('#username').val()
+    var email=$('#email').val()
+    var phone=$('#phone').val()
+
+  data = {
+    'csrfmiddlewaretoken':'{{csrf_token}}',
+    'first_name':first_name,
+    'last_name':last_name,
+    'username':username,
+    'email':email,
+    'phone':phone
+  }
+  if(first_name== ""){
+    $('#span').html('<h5>Enter Firstname</h5>')
+  }
+  else if(last_name== ""){
+    $('#span').html('<h5>Enter Lastname</h5>')
+  }
+  else if(username==""){
+    $('#span').html('<h5>Enter Username</>')
+  }
+  else if(email== ""){
+    $('#span').html('Enter Email')
+  }
+  else if(phone.length !=10){
+    $('#span').html('Enter Phone Number')
+  }
+  else{
+    $.ajax({
+      url: '/admin1/adminedit/{{user.id}}/',
+      method: "POST",
+      data:data,
+      dataType:'json',
+      success:function(data){
+        if(data== 'true'){
+          alert('User Edited')
+          window.location.replace('/admin1/usertable/')
+        }
+        if(data == 'false'){
+          $('#span').html('<h5>Invalid Credential</h5>')
+        }
+
+      }
+    })
+
+  }
+
+  })
+
+</script> 
+</body>
+</html>

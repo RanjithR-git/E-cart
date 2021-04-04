@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <fieldset>
+        <p  class="text-uppercase pull-center"> Add New Product</p>
+         <div class="form-group" >
+            <select name="category_id">
+                {% for data in categories %}
+                <option value="{{data.id}}"  >{{data.category}}</option> 
+                {% endfor %}
+            </select>
+         </div>
+        <div class="form-group">
+            <input type="text" name="product_name" id="product_name" class="form-control input-lg" required="required" placeholder="Title">
+        </div>
+    
+        <div class="form-group">
+            <input type="text" name="desc" id="desc" class="form-control input-lg" required="required" placeholder="Description">
+        </div>
+        <div class="form-group">
+            <input type="number" name="price" id="price" class="form-control input-lg" required="required" placeholder="Price">
+        </div>
+        <div class="form-group">
+            <input type="number" name="quantity" id="quantity" class="form-control input-lg" required="required" placeholder="Quantity">
+        </div>
+        <div class="form-group">
+            <input type="file" name="images" id="image" class="form-control input-lg" required="required" placeholder="">
+            <textarea name="images" id="images" style="display: none;"></textarea>
+        </div>
+            <input type="submit" class="btn btn-lg btn-primary"  value=" Add">
+        </div>
+    
+    </fieldset>
+    </form>
+{% endblock %}
