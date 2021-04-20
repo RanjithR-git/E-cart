@@ -1,0 +1,74 @@
+{% extends 'base1.html' %}
+{% block content %}
+
+<style>
+    body {
+  background: #97cfe5;
+  background: -webkit-linear-gradient(to right, #dad6d1, #dbd5e6);
+  background:linear-gradient(to right, #fefeff, #b5c1d4);
+    min-height: 100vh;
+}
+</style>
+<div class="px-4 px-lg-0">
+  <div class="pb-5" style="padding-top:8rem !important">
+    <div style="margin-left: 20rem; font-size: 1.5rem;" class="container">
+      <div class="row">
+        <div class="col-lg-12 p-5 bg-white rounded shadow-sm mb-5">
+          
+          <!-- Shopping cart table -->
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col" class="border-0 bg-light">
+                    <div class="p-2 px-3 text-uppercase">Product</div>
+                  </th>
+                  <th scope="col" class="border-0 bg-light">
+                    <div class="py-2 text-uppercase">Price</div>
+                  </th>
+                  <th scope="col" class="border-0 bg-light">
+                    <div class="py-2 text-uppercase">Quantity</div>
+                  </th>
+                  <th scope="col" class="border-0 bg-light">
+                    <div class="py-2 text-uppercase">order on</div>
+                  </th>
+                  
+                  <th scope="col" class="border-0 bg-light">
+                    <div class="py-2 text-uppercase">Transaction ID</div>
+                  </th>
+                  <th scope="col" class="border-0 bg-light">
+                    <div class="py-2 text-uppercase">Order Status</div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                 {% for item in items_data %}
+                <tr>
+                  <th scope="row" class="border-0">
+                    <div class="p-2">
+                      <img src="{{item.products.ImageURL}}" alt="" width="70" class="img-fluid rounded shadow-sm">
+                      <div class="ml-3 d-inline-block align-middle">
+                        <h5 class="mb-0"> <a href="#" class="text-dark d-inline-block align-middle">{{item.products.product_name}}</a></h5><span class="text-muted font-weight-normal font-italic d-block"></span>
+                      </div>
+                    </div>
+                  </th>
+                  <td class="border-0 align-middle"><strong>{{item.products.price}}</strong></td>
+                    <td class="border-0 align-middle"><strong>{{item.quantity}}</strong></td>
+                  <td class="border-0 align-middle"><strong>{{item.tdate}}</strong></td>
+                  <td class="border-0 align-middle"><strong>{{item.tid}}</strong></td>
+                  <td class="border-0 align-middle"><strong>{{item.payment_status}}</strong></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <!-- End -->
+        </div>
+      </div>
+      
+    </div>
+</div>
+</div>
+
+
+{% endblock %}

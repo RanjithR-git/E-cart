@@ -70,6 +70,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						{% else %}
 						<li><a href="/userlogin">Login</a></li>
 						{% endif %}
+						<li><a href="/user_profile">My Profile</a></li>
+						<li><a href="/order_history"> View Orders</a></li>
 						<li><a href="/createuser"> Create Account </a></li>
 					</ul>
 					</div>
@@ -188,13 +190,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						<div class="header-right2">
 							<div class="cart box_1">
 								<a href="checkout.html">
-									<h3> <div class="total">
-										<!-- <span class="simpleCart_total"></span> (<span id="simpleCart_quantity" class="simpleCart_quantity"></span> items)</div> -->
-										<!-- <img src="{% static 'images/bag.png' %}" alt="" /> -->
-									</h3>
+									
 								</a>
 								<p><a href="{% url 'show_cart' %}" class="simpleCart_empty">
-									<span class="glyphicon glyphicon-shopping-cart" style="color: whitesmoke;"></span>
+									<span class="glyphicon glyphicon-shopping-cart" style="color: whitesmoke; font-size: 2em"></span>
 									<span class="badge badge-light">{{count}}</span><br>
 
 									View Cart</a></p>
@@ -374,7 +373,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						<div class="clearfix"></div>
 					</div>
 			</div>
-				
+			</div>
 					<div class="footer-w3l">
 						<div class="container">
 							<div class="footer-grids">
@@ -487,7 +486,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				</div>
 			</div>
 			 -->
-
+			</div>
 </body>
 <script>
 	

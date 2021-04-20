@@ -5,13 +5,20 @@ from django.http import JsonResponse
 from django.contrib import messages
 from admin1.models import product, Categories
 from . models import *
-
+import datetime
+import razorpay
+import json
 # Create your views here.
 
 def home(request):
-    prod = product.objects.all()
-    return render(request, 'index.html',{'products':prod})
-
+    if request.user.is_authenticated:
+        prod = product.objects.all()
+        user = request.user
+        cart = Cart.objects.filter(user=user)
+        item_count = cart.count()
+        return render(request, 'index.html',{'products':prod , 'no':item_count})
+    else:
+        return redirect(userlogin)
 
 def usersignup(request):
     if request.user.is_authenticated:
@@ -59,6 +66,100 @@ def userregister(request):
 
 def createuser(request):
     return render(request, 'registered.html')
+
+def login_with_otp(request):
+    return render(request, 'otp.html')
+
+def otp_generate(request):
+    if request.user.is_authenticated:
+        print('hello')
+        if request.method == 'POST':
+            print('world12345')
+            phone = request.POST['phone']
+            user1 = UserData.objects.get(phone=phone)
+            User= user1.user
+            print(User)
+            request.session['phone'] = phone
+            if user1 is not None:
+                print('world')
+                random_number = random.randint(1000, 9999)
+                global otp
+                otp = random_number
+                print(phone)
+                account_sid = 'AC06cf3ca85385371b53b23d4fb20fa036'
+                auht_token = 'fb55e5b4442db3d2a35e59c80d51c136'
+                client = Client(account_sid, auht_token)
+
+                message = client.message.create(
+                    body=f"You OTP is {otp}",
+                    from_='+17149301536',
+                    to=f'+916282936599'
+                )
+                print(message.sid)
+                print(otp)
+                return redirect(otp_validate)
+    else:
+        return redirect(login_with_otp)
+
+def otp_validate(request):
+    if request.method =='POST':
+        phone = request.session['phone']
+        print(phone)
+        user1 = UserData.objects.get(phone=phone)
+        User = user1.user
+        print(User)
+        print(user1)
+        user_otp = request.POST['otp']
+        print(user_otp)
+        global otp
+        print(otp)
+        print(type(otp), type(user_otp))
+        if otp == int(user_otp):
+            print('hai')
+            auth.login(request, User)
+            return redirect(home)
+        return redirect(otp_generate)
+    else:
+        return render(request, 'otp.html')
+
+
+def user_profile(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            user = request.user
+            cart = Cart.objects.filter(user=user)
+            user.first_name = request.POST['name']
+            user.last_name = request.POST['mobile']
+            user.email = request.POST['email']
+            user.save()
+
+            if Userprofile.objects.filter(user=user).exists():
+                user_details = Userprofile.objects.get(user=user)
+
+                if 'profile-image-upload' not in request.POST:
+                    profile_pic = request.FILES.get('profile_image_upload')
+                else:
+                    profile_pic = user_details.profilepic
+                
+                user_details.profilepic = profile_pic
+                user_details.save()
+            else:
+                profile_pic = request.FILES.get('profile-image-upload')
+                Userprofile.objects.create(user=user, profilepic=profile_pic)
+            
+            return redirect(home)
+        else:
+            cartegory = Categories.objects.all()
+            user = request.user
+            cart = Cart.objects.filter(user= user)
+            item_count = cart.count()
+            if Userprofile.objects.filter(user=user).exists():
+                user_details = Userprofile.objects.get(user=user)
+                return render(request, 'user_profile.html', {'catergory_data':cartegory, 'no':item_count, 'userdetails':user_details})
+            else:
+                return render(request, 'user_profile.html', {'catergory_data':cartegory,'no': item_count})
+    else: 
+        return redirect(userlogin)
         
 def userlogout(request):
     if request.user.is_authenticated:
@@ -132,6 +233,140 @@ def edit_cart(request):
     return JsonResponse({'total':price, 'grandtotal':grandtotal}, safe=False)
     
 
-def view_product(request):
-    pass
 
+def show_address(request):
+    if request.user.is_authenticated:
+        user = request.user
+        cart = Cart.objects.filter(user=user)
+        item_count = cart.count()
+        print(item_count)
+        address = Address.objects.filter(user=user)
+        return render(request, 'user_address.html', {'no':item_count, 'address':address})
+    else:    
+        return redirect(home)
+
+def create_address(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            user = request.user
+            name = request.POST['firstname']
+            email = request.POST['email']
+            address = request.POST['address']
+            city = request.POST['city']
+            state = request.POST['state']
+            pincode = request.POST['pincode']
+            Address.objects.create(user=user, name=name, email=email, address=address, city=city, state=state, pincode=pincode)
+            return redirect(show_address)
+        else:
+            return render(request, 'edit_address.html')
+    
+    return redirect(home)
+
+
+def edit_address(request, id):
+    if request.user.is_authenticated:
+        address_data = Address.objects.get(id=id)
+        if request.method == 'POST':
+            address_data.name = request.POST['firstname']
+            address_data.email = request.POST['email']
+            address_data.address = request.POST['address']
+            address_data.city = request.POST['city']
+            address_data.state = request.POST['state']
+            address_data.pincode = request.POST['pincode']
+            address_data.save()
+            return redirect(show_address)
+        else:
+            edit = 1
+            return render(request, 'edit_address.html', {'address':address_data, 'edit':edit})
+    else:
+        return redirect(home)
+
+def delete_address(request, id):
+    if request.user.is_authenticated:
+        address = Address.objects.get(id=id)
+        print(address)
+        address.delete()
+        return redirect(show_address)
+    else:
+        return redirect(home)
+
+def user_payment(request, id):
+    if request.user.is_authenticated:
+        if request.method== 'POST':
+            user = request.user
+            address = Address.objects.get(id=id)
+            grandtotal = 0
+            date = datetime.datetime.now()
+            trans_id = datetime.datetime.now().timestamp()
+            mode = request.POST['mode']
+            address.name = request.POST['name']
+            address.email = request.POST['email']
+            address.address = request.POST['address']
+            address.city = request.POST['city']
+            address.state = request.POST['state']
+            address.pincode = request.POST['pincode']
+            address.save()
+            cart = Cart.objects.filter(user=user)
+            status = 'pending'
+            for item in cart:
+                item.totalprice= item.quantity * item.product.price
+                grandtotal = grandtotal + item.totalprice
+            
+            for item in cart:
+                Purchase.objects.create(user=user, address=address, products=item.product, quantity=item.quantity, totalprice=item.product.price * item.quantity, tdate=date,  tid=trans_id, payment_mode=mode, order_status='pending', payment_status=status)
+                item.product.quantity = item.product.quantity - item.quantity
+                item.product.save()
+            cart.delete()
+
+            if mode == 'COD':
+                mode = "COD"
+                messages.info(request, "Order placed Successfully")
+                return JsonResponse({'mode':mode, 'tid':trans_id}, safe=False)
+            
+            elif mode == 'Paypal':
+                mode = 'Paypal'
+                return JsonResponse({'mode':mode, 'tid':trans_id}, safe=False)
+
+            elif mode == 'Razorpay':
+                mode = 'Razorpay'
+                return JsonResponse({'mode':mode, 'tid': trans_id}, safe=False)
+        else:
+            user= request.user
+            address = Address.objects.filter(id=id)
+            cart= Cart.objects.filter(user=user)
+            item_count = cart.count()
+            grandtotal = 0
+            for item in cart:
+                item.totalprice = item.quantity * item.product.price
+                grandtotal = grandtotal + item.totalprice
+            return render(request, 'user_payment.html', {'cart':cart, 'no':item_count, 'grandtotal':grandtotal, 'address':address})
+    else:
+        return redirect(home)
+
+def paypal(request):
+    tr_id = request.POST['tid']
+    purchases = Purchase.objects.filter(tid=tr_id)
+    for purchase in purchases:
+        purchase.payment_status = 'SUCCESS'
+        print(purchase)
+        purchase.save()
+    return JsonResponse('success', safe=False)
+
+def razorpay(request):
+    tr_id = request.POST['tid']
+    purchases = Purchase.objects.filter(tid=tr_id)
+    for purchase in purchases:
+        purchase.payment_status = 'SUCCESS'
+        purchase.save()
+    return JsonResponse('success', safe=False)
+
+def order_history(request):
+    if request.user.is_authenticated:
+        user = request.user
+        purchases = Purchase.objects.filter(user=user)
+        cart = Cart.objects.filter(user=user)
+        item_count = cart.count()
+        return render(request, 'user_order_history.html',{'items_data':purchases, 'no':item_count})
+
+
+    

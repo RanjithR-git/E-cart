@@ -1,0 +1,363 @@
+{% extends 'base1.html' %}
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body {
+  font-family: Arial;
+  font-size: 17px;
+  background: #97cfe5;
+  background: -webkit-linear-gradient(to right, #dad6d1, #dbd5e6);
+  background:linear-gradient(to right, #fefeff, #b5c1d4);
+  min-height: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.row {
+  display: -ms-flexbox; /* IE10 */
+  display: flex;
+  -ms-flex-wrap: wrap; /* IE10 */
+  flex-wrap: wrap;
+  margin: 0 -16px;
+}
+
+.col-25 {
+  -ms-flex: 25%; /* IE10 */
+  flex: 25%;
+}
+
+.col-50 {
+  -ms-flex: 25%; /* IE10 */
+  flex: 25%;
+}
+
+.col-75 {
+  -ms-flex: 75%; /* IE10 */
+  flex: 75%;
+}
+
+.col-25,
+.col-50,
+.col-75 {
+  padding: 0 16px;
+}
+
+.container {
+}
+
+input[type=text] {
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+label {
+  margin-bottom: 10px;
+  display: block;
+}
+
+.icon-container {
+  margin-bottom: 20px;
+  padding: 7px 0;
+  font-size: 24px;
+}
+
+.btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px;
+  margin: 10px 0;
+  border: none;
+  width: 100%;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 17px;
+}
+
+.btn:hover {
+  background-color: #45a049;
+}
+
+a {
+  color: #2196F3;
+}
+
+hr {
+  border: 1px solid lightgrey;
+}
+
+span.price {
+  float: right;
+  color: grey;
+}
+
+/* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other (also change the direction - make the "cart" column go on top) */
+@media (max-width: 800px) {
+  .row {
+    flex-direction: column-reverse;
+  }
+  .col-25 {
+    margin-bottom: 20px;
+  }
+}
+#rzp-button1{
+  display: none;
+}
+</style>
+
+  <a href="/show_cart/"><h5>Back to Cart</h5></a>
+<div class="row" style="overflow-x: unset;">
+  <div class="col-75">
+    <div class="container" >
+
+        <div class="row">
+          {% for address in address%}
+          <div class="col-50">
+            <form >
+            <h3>Billing Address</h3>    
+            <label for="fname"><i class="fa fa-user"></i> Full Name</label>
+            <input type="text" id="fname" name="name"   value="{{address.name}}" placeholder="John M. Doe"required>
+            <label for="email"><i class="fa fa-envelope"></i> Email</label>
+            <input type="text" id="email" name="email"  value="{{address.email}}" placeholder="john@example.com"required>
+            <label for="adr"><i class="fa fa-address-card-o"></i> Address</label>
+            <input type="text" id="adr" name="address"   value="{{address.address}}" placeholder="542 W. 15th Street"required>
+            <label for="city"><i class="fa fa-institution"></i> City</label>
+            <input type="text" id="city" name="city"  value="{{address.city}}" placeholder="kollam"required>
+
+            <div class="row">
+              <div class="col-50">
+                <label for="state">State</label>
+                <input type="text" id="state"   name="state" value="{{address.state}}" placeholder="Kerala"required>
+              </div>
+              <input type="text" id= "address_id" hidden value="{{address.id}}">
+
+              <div class="col-50">
+                <label for="zip">Pincode</label>
+                <input type="text" id="zip"  name="pincode" value="{{address.pincode}}" placeholder="695643"required>
+              </div>
+
+          {% endfor %}
+          
+        </div>
+        <p>Payment Method :</p>
+        
+          
+        <div style="display: flex;">
+        <input type="radio" id="cod" name="mode" value="COD" required>
+        <label for="cod">COD</label><br>
+        <input type="radio" id="paypal" name="mode" value="Paypal" required>
+        <label for="Paypal">Paypal</label><br>
+        <input type="radio" id="razorpay" name="mode" value="Razorpay" required>
+        <label for="razorpay">RazorPay</label><br>
+
+      </div>
+      <div style="text-align: center;">      
+        <span id="invalid" style="float: right; color: red; font-weight: bold; font-size: medium;"></span>        
+      </div>
+
+      
+      <div style="margin-left: 4rem;" ><input style="width: 50%;" id="order" type="button" value="Place Order" class="btn"></div>
+      <div id="paypal-button-container"></div>
+</form>
+    </div>
+    </div>
+  </div>
+  </div>
+</div>
+  <div class="col-25">
+    <div class="container">
+      <h4>Cart <span class="price" style="color:black"><i class="fa fa-shopping-cart"></i> <b>{{no}}</b></span></h4>
+      {% for item in cart %}
+      <p><a href="#">{{item.product.product_name}}</a> <span class="price">{{item.totalprice}}</span></p>
+      
+      {% endfor %}
+      <hr>
+      <p>Total <span class="price" style="color:black"><h2><b>{{grandtotal}}</b></h2></span></p>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+</div>
+<script src="https://www.paypal.com/sdk/js?client-id=AUQQ1tFQ3qF-_MiMXRyxIS3MED3FlpmXrXhmJEAJ1aMd01cowanbVDhbGZBeeff2-q9aqh3DRSFPvBpt&currency=USD" data-namespace="paypal_sdk"></script>
+<script>
+
+  function paypal(tid){
+ 
+// Render the PayPal button into #paypal-button-container
+paypal_sdk.Buttons({
+  
+  // Set up the transaction
+  createOrder: function(data, actions) {
+      return actions.order.create({
+          purchase_units: [{
+              amount: {
+                  value: '{{grandtotal}}',
+                  
+              }
+
+          }]
+      });
+  },
+
+  // Finalize the transaction
+  onApprove: function(data, actions) {
+      return actions.order.capture().then(function(details) {
+          // Show a success message to the buyer
+          console.log(details)
+          
+          alert('Transaction completed by ' + details.payer.name.given_name + '!');
+          window.location.replace("/")
+          console.log(tid)
+          successpaypal(tid)
+          
+      });
+  }
+
+
+})
+.render('#paypal-button-container')
+  }
+
+  function successpaypal(tid){
+    
+    console.log(tid)
+    var userData = {
+          csrfmiddlewaretoken: '{{ csrf_token }}',
+          tid : tid
+    
+        }
+    $.ajax({
+          url : '/paypal/',
+          type: "POST",
+          data : userData,
+          dataType : "json",
+          success: function( data ){
+            if (data == 'true'){
+              window.location.replace("/")
+            }
+
+          }
+      });
+  }
+
+</script>
+<script
+src="https://code.jquery.com/jquery-3.5.0.min.js"
+integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ="
+crossorigin="anonymous"
+></script>
+<script>
+  var amount = 0
+  $('#order').click(function(){
+    let id = $('#address_id').val()
+    console.log(id)
+    var userData = {
+      csrfmiddlewaretoken: '{{ csrf_token }}',
+      mode : $("input[name='mode']:checked").val(),
+      name : $('#fname').val(),
+      email : $('#email').val(),
+      address : $('#adr').val(),
+      city : $('#city').val(),
+      state : $('#state').val(),
+      pincode : $('#zip').val(),
+    }
+    if (userData.name == ''){
+      $('#invalid').html('please enter your name')
+    }
+    else if(userData.email === ''){
+      $('#invalid').html('please enter Email')
+    }
+    else if(userData.address === ''){
+      $('#invalid').html('plese enter your Address')
+    }
+    else if(userData.city === ''){
+      $('#invalid').html('plese enter your City')
+    }
+    else if(userData.state === ''){
+      $('#invalid').html('plese enter your State')
+    }
+    else if(userData.pincode === ''){
+      $('#invalid').html('plese enter your Pincode')
+    }
+    else if(userData.mode === ''){
+      $('#invalid').html('plese enter your mode')
+    }
+    else(
+      $.ajax({
+        url : '/user_payment/'+id+'/',
+        type : "POST",
+        data : userData,
+        dataType : "json",
+        success: function(data){
+          if(data.mode == 'COD'){
+            alert('Order placed successfully!!!')
+          window.location.replace("/")
+        }
+          else if(data.mode == 'Paypal'){
+            console.log(data)
+            $('#order').hide()
+            paypal(data.id)
+          }
+          else if(data.mode == 'Razorpay'){
+            console.log(data.mode)
+            $('#order').hide()
+            razorpay(data.tid)
+          }
+        }
+      })
+    )
+  })
+</script>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    function razorpay(){
+        var payment_status = 'razorpay'
+        var options = {
+            "key": "rzp_test_I7MEX0xp6ByIh7", 
+            "amount": '50000', 
+            "currency": "INR",
+            "name": "E-cart",
+            "description": "Get Premium Membership",
+            "image": "https://image.flaticon.com/icons/png/512/575/575780.png",
+            "order_id": "{{payment.id}}", 
+            "handler": function (response) {
+                    alert('Transaction completed..!!!');
+                    $.ajax({
+                        url:'/razorpay/',
+                        method:'POST',
+                        success:function(data){
+                            if(data == 'success'){
+                                window.location.replace("/")
+                            }
+                            else{
+                                alert('something wrong!')
+                            }
+                        }
+                    })
+                    },
+                    "prefill": {
+                        "name": "{{request.user.name}}",
+                        "email": "{{request.user.email}}",
+                        "contact": "{{request.user.phone}}"
+                    },
+                    "notes": {
+                        "address": "Razorpay Corporate Office"
+                    },
+                    "theme": {
+                        "color": "#F37254"
+                    }
+                };
+                var rzp1 = new Razorpay(options);
+                
+                    rzp1.open();
+            }
+
+
+    </script>
+{% endblock %}

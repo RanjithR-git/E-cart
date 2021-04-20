@@ -1,0 +1,33 @@
+{% extends 'base1.html' %}
+{% block content %}
+<style>
+    body {
+  background: #97cfe5;
+  background: -webkit-linear-gradient(to right, #dad6d1, #dbd5e6);
+  background:linear-gradient(to right, #fefeff, #b5c1d4);
+    min-height: 100vh;
+}
+
+</style>
+{% endblock %}
+{% block address %}
+  <div class="row-container" style="font-size: medium;">
+    <h3 style="font-weight: bold; padding-bottom: 2rem;"> Choose a Delivery Address &nbsp;
+         <a href="/create_address/"><button class="btn btn-success">ADD New Address</button></h3></a>
+    
+    {% for  address in address %}
+    <div class="col-sm-3 pt-4">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title"><b></b>{{address.name}}</b></h3><br>
+          <h5 class="card-title"><b>{{address.email}}</b></h5>
+          <p class="card-text"><b>{{address.address}}</b><br><b>{{address.city}}</b><br><b>{{address.state}}</b><br><b>{{address.pincode}}</b></p>
+          <a href="/user_payment/{{address.id}}/" class="btn btn-info">Deliver to this Address</a><br><br>
+          <a href="/edit_address/{{address.id}}/"class="btn btn-success">Edit Address</a>
+          <a href="/delete_address/{{address.id}}/"class="btn btn-danger">Delete Address</a>
+        </div>
+      </div>
+    </div>
+ 
+    {% endfor %}
+{% endblock %}

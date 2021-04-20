@@ -1,15 +1,8 @@
-<!--
-Au<!--
-Author: W3layouts
-Author URL: http://w3layouts.com
-License: Creative Commons Attribution 3.0 Unported
-License URL: http://creativecommons.org/licenses/by/3.0/
--->
 {% load static %}
 <!DOCTYPE HTML>
 <html>
 <head>
-<title>New Shop a E-Commerce Online Shopping Category Flat Bootstrap Responsive Website Template | Login :: w3layouts</title>
+<title>E-CART </title>
 <!--css-->
 <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet" type="text/css" media="all"/>
 <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css" media="all" />
@@ -19,18 +12,18 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="keywords" content="New Shop Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, 
 Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
-<!-- <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
-<script src="{% static 'js/jquery.min.js' %}"></script> -->
+<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+<script src="{% static 'js/jquery.min.js' %}"></script>
 <link href="//fonts.googleapis.com/css?family=Cagliostro" rel='stylesheet' type='text/css'>
 <link href="//fonts.googleapis.com/css?family=Open+Sans:400,800italic,800,700italic,700,600italic,600,400italic,300italic,300" rel='stylesheet' type='text/css'>
 <!--search jQuery-->
-	<!-- <script src="{% static 'js/main.js' %}"></script> -->
+	<script src="{% static 'js/main.js' %}"></script>
 <!--search jQuery-->
 
  <!--mycart-->
-<!-- <script type="text/javascript" src="{% static 'js/bootstrap-3.1.1.min.js' %}"></script> -->
+<script type="text/javascript" src="{% static 'js/bootstrap-3.1.1.min.js' %}"></script>
  <!-- cart -->
-<!-- <script src="{% static 'js/simpleCart.min.js' %}"></script> -->
+<script src="{% static 'js/simpleCart.min.js' %}"></script>
 <!-- cart -->
 </head>
 <body>
@@ -44,7 +37,12 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 					<div class="top-right">
 					<ul>
 						<li><a href="checkout.html">Checkout</a></li>
+						{% if user.is_authenticated %}
+						<li><b>{{user.username}}</b></li>
+						<li><a href="/userlogout">Logout</a></li>
+						{% else %}
 						<li><a href="/userlogin">Login</a></li>
+						{% endif %}
 						<li><a href="registered.html"> Create Account </a></li>
 					</ul>
 					</div>
@@ -55,7 +53,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				<div class="container">
 					<div class="logo-nav">
 						<div class="logo-nav-left">
-							<h1><a href="index.html">New Shop <span>Shop anywhere</span></a></h1>
+							<h1><a href="index.html">E-CART <span>Shop anywhere</span></a></h1>
 						</div>
 						<div class="logo-nav-left1">
 							<nav class="navbar navbar-default">
@@ -70,7 +68,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 							</div> 
 							<div class="collapse navbar-collapse" id="bs-megadropdown-tabs">
 								<ul class="nav navbar-nav">
-									<li class="active"><a href="index.html" class="act">Home</a></li>	
+									<li class="active"><a href="/" class="act">Home</a></li>	
 									<!-- Mega Menu -->
 									<li class="dropdown">
 										<a href="#" class="dropdown-toggle" data-toggle="dropdown">Women<b class="caret"></b></a>
@@ -102,7 +100,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 														<a href="products.html"><img src="{% static 'images/woo.jpg' %}" alt=" "/></a>
 												</div> 
 												<div class="col-sm-3  multi-gd-img">
-														<a href="products.html"><img src="{% static 'images/woo1.jpg' %}" alt=" "/></a>
+														<a href="products.html"><img src="{% static 'images/woo1.jpg '%}" alt=" "/></a>
 												</div>
 												<div class="clearfix"></div>
 											</div>
@@ -164,11 +162,13 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 							<div class="cart box_1">
 								<a href="checkout.html">
 									<h3> <div class="total">
-										<span class="simpleCart_total"></span> (<span id="simpleCart_quantity" class="simpleCart_quantity"></span> items)</div>
-										<img src="{% static 'images/bag.png' %}" alt="" />
+										<!-- <span class="simpleCart_total"></span> (<span id="simpleCart_quantity" class="simpleCart_quantity"></span> items)</div>
+										<img src="{% static 'images/bag.png' %}" alt="" /> -->
 									</h3>
 								</a>
-								<p><a href="javascript:;" class="simpleCart_empty">Empty Cart</a></p>
+								<p><a href"" class="simpleCart_empty">									
+									<span class="glyphicon glyphicon-shopping-cart" style="color: whitesmoke; font-size: 2em"></span>
+									<span class="badge badge-light">{{count}}</span><br> Cart</a></p>
 								<div class="clearfix"> </div>
 							</div>	
 						</div>
@@ -181,145 +181,80 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		<!--banner-->
 		<div class="banner1">
 			<div class="container">
-				<h3><a href="index.html">Home</a> / <span>Login</span></h3>
+				<h3><a href="/">Home</a> / <span>View Orders</span></h3>
 			</div>
 		</div>
-	<!--banner-->
-
-	<!--content-->
-		<div class="content">
-				<!--login-->
-			<div class="login">
-				<div class="main-agileits">
-					<div class="form-w3agile">
-						<h3>Login To New Shop</h3>
-						<form action="#" method="post">
-							<div class="key">
-								<i class="fa fa-user" aria-hidden="true"></i>
-								<input  type="text" placeholder="username" name="Username" id="username"  required="">
-								<div class="clearfix"></div>
-							</div>
-							<div class="key">
-								<i class="fa fa-lock" aria-hidden="true"></i>
-								<input  type="password" placeholder="Password" id="password" name="Password" required="">
-								<div class="clearfix"></div>
-							</div>
-							<span id="span"></span><br>
-							<input class="btn btn-primary" type="button" name="" id="btn" value="Login">
-						</form>
-					</div>
-					<br><br>
-					<div class="forg">
-						<a href="/login_with_otp/" class="forg-left"><b> Login With OTP</b></a>
-						<a href="/userregister" class="forg-right">Register</a>
-					<div class="clearfix"></div>
-					</div>
-				</div>
-			</div>
-				<!--login-->
-		</div>
-		<!--content-->
-		<!---footer--->
-					<div class="footer-w3l">
-						<div class="container">
-							<div class="footer-grids">
-								<div class="col-md-3 footer-grid">
-									<h4>About </h4>
-									<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
-									<div class="social-icon">
-										<a href="#"><i class="icon"></i></a>
-										<a href="#"><i class="icon1"></i></a>
-										<a href="#"><i class="icon2"></i></a>
-										<a href="#"><i class="icon3"></i></a>
-									</div>
-								</div>
-								<div class="col-md-3 footer-grid">
-									<h4>My Account</h4>
-									<ul>
-										<li><a href="checkout.html">Checkout</a></li>
-										<li><a href="login.html">Login</a></li>
-										<li><a href="registered.html"> Create Account </a></li>
-									</ul>
-								</div>
-								<div class="col-md-3 footer-grid">
-									<h4>Information</h4>
-									<ul>
-										<li><a href="index.html">Home</a></li>
-										<li><a href="products.html">Products</a></li>
-										<li><a href="codes.html">Short Codes</a></li>
-										<li><a href="mail.html">Mail Us</a></li>
-										<li><a href="products1.html">products1</a></li>
-									</ul>
-								</div>
-								<div class="col-md-3 footer-grid foot">
-									<h4>Contacts</h4>
-									<ul>
-										<li><i class="glyphicon glyphicon-map-marker" aria-hidden="true"></i><a href="#">E Comertown Rd, Westby, USA</a></li>
-										<li><i class="glyphicon glyphicon-earphone" aria-hidden="true"></i><a href="#">1 599-033-5036</a></li>
-										<li><i class="glyphicon glyphicon-envelope" aria-hidden="true"></i><a href="mailto:example@mail.com"> example@mail.com</a></li>
-										
-									</ul>
-								</div>
-							<div class="clearfix"> </div>
-							</div>
-							
-						</div>
-					</div>
-					<!---footer--->
-					<!--copy-->
-					<div class="copy-section">
-						<div class="container">
-							<div class="copy-left">
-								<p>&copy; 2016 New Shop . All rights reserved | Design by <a href="http://w3layouts.com">W3layouts</a></p>
-							</div>
-							<div class="copy-right">
-								<img src="{% static 'images/card.png' %}" alt=""/>
-							</div>
-							<div class="clearfix"></div>
-						</div>
-					</div>
-				<!--copy-->
-
-				
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
-<script>
-	$('#btn').click(function(){
-		var username=$('#username').val()
-		var password=$('#password').val()
+        <div class="content">
+			<div class="cart-items">
+				<div class="container">
+					 <h2><b> </b></h2>
+					 {% block address %}
+					 {% endblock %}
 	
-		data= {
-		  'csrfmiddlewaretoken':'{{csrf_token}}',
-		  'username':username,
-		  'password':password
-		}
-		if(username==""){
-		  $('#span').html('<h5>Enter the Username!!</h5>')
-		}
-		else if(password==""){
-		  $('#span').html('<h5>Enter the password!!</h5>')
-		}
-		else{
-		  $.ajax({
-			url: '/userlogin/',
-			method: "POST",
-			data:data,
-			dataType:'json',
-			success:function(data){
-			  if(data =='true'){
-				window.location.replace('/')
-	
-			  }
-			  if(data=='false'){
-				$('#span').html('<h5>Invalid Entry!!</h5>')
-	
-			  }
-			}
-		  })
-	
-		}
-	  })
-	
-</script>
+<!---footer--->
+</div>
+</div>
+</div>
+{% block content %}
+{% endblock %}
+<div class="footer-w3l">
+    <div class="container">
+        <div class="footer-grids">
+            <div class="col-md-3 footer-grid">
+                <h4>About </h4>
+                <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+                <div class="social-icon">
+                    <a href="#"><i class="icon"></i></a>
+                    <a href="#"><i class="icon1"></i></a>
+                    <a href="#"><i class="icon2"></i></a>
+                    <a href="#"><i class="icon3"></i></a>
+                </div>
+            </div>
+            <div class="col-md-3 footer-grid">
+                <h4>My Account</h4>
+                <ul>
+                    <li><a href="checkout.html">Checkout</a></li>
+                    <li><a href="login.html">Login</a></li>
+                    <li><a href="registered.html"> Create Account </a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 footer-grid">
+                <h4>Information</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="codes.html">Short Codes</a></li>
+                    <li><a href="mail.html">Mail Us</a></li>
+                    <li><a href="products1.html">products1</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 footer-grid foot">
+                <h4>Contacts</h4>
+                <ul>
+                    <li><i class="glyphicon glyphicon-map-marker" aria-hidden="true"></i><a href="#">E Comertown Rd, Westby, USA</a></li>
+                    <li><i class="glyphicon glyphicon-earphone" aria-hidden="true"></i><a href="#">1 599-033-5036</a></li>
+                    <li><i class="glyphicon glyphicon-envelope" aria-hidden="true"></i><a href="mailto:example@mail.com"> example@mail.com</a></li>
+                    
+                </ul>
+            </div>
+        <div class="clearfix"> </div>
+        </div>
+        
+    </div>
+</div>
+<!---footer--->
+<!--copy-->
+<div class="copy-section">
+    <div class="container">
+        <div class="copy-left">
+            <p>&copy; 2016 New Shop . All rights reserved | Design by <a href="http://w3layouts.com">W3layouts</a></p>
+        </div>
+        <div class="copy-right">
+            <img src="{% static 'images/card.png' %}" alt=""/>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>
+  </div>
 </body>
 </html>
