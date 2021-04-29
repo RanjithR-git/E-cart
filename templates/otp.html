@@ -214,23 +214,32 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								<div id='sign-in' class='login-setup-section'>
 									<h3 class="request-otp-header">Please verify your mobile number</h3>
 									<div class="form-group login-label">
+										<form action="/login_with_otp/" method="POST">
+											{% csrf_token %}
 										<label for="inputnumber">mobile number</label>
-										<input type="number" id="phone" class="form-control input-edit" placeholder='Enter mobile number' id="number">
+										<input type="number" id="phone" name="Phone" class="form-control input-edit" placeholder='Enter mobile number'>
 										<span id="span1" style="color: #c74032;font-weight: 600;font-size: 12px;"></span>
+										<button type="submit" class="btn btn-default btn-lg btn-block request-otp">Get OTP</button>
+
+										</form>
 									</div>
-									<a href="/otp_generate/"><button type="button" class="btn btn-default btn-lg btn-block request-otp">Get OTP</button></a>
 								</div>
+								{% if user.id != None %}
 								 <div id='verify-otp' class="login-setup-section">
 									
 									<h3 class="request-otp-header">Verify OTP</h3>
 									<div class="form-group login-label">
+										<form action="{% url 'otp_validate' id=user.id otp=otp %}" method="POST">
+											{% csrf_token%}
 										<label for="inputnumber">One Time Password</label>
-										<input type="number" id="otp" class="form-control input-edit" placeholder='Enter OTP' id="number">
+										<input type="number" id="otp" name="userOTP" class="form-control input-edit" placeholder='Enter OTP'>
 										<label class="pull-right resend-otp" onclick="resend()">Resend otp</label>
 										<span id="span2" style="color: #c74032;font-weight: 600;font-size: 12px;"></span>
+										<button type="submit"  class="btn btn-default btn-lg btn-block request-otp ">Verify</button>
+										</form>
 									</div>
-									<a href="/otp_validate/"><button type="button"  class="btn btn-default btn-lg btn-block request-otp ">Verify</button></a>
-								</div> 
+								</div>
+								{% endif %} 
 							</div>
 						</div>
 					</div>

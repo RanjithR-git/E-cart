@@ -8,11 +8,11 @@ urlpatterns = [
     path('userlogin/',views.userlogin, name='userlogin'),
     path('userregister/',views.userregister, name='userregister'),
     path('createuser/',views.createuser, name='createuser'),
+    path('contact/', views.contact, name='contact'),
     
     
-    path('login_with_otp/', views.login_with_otp, name='login_with_otp'),
-    path('otp_generate/', views.otp_generate, name='otp_generate'),
-    path('otp_validate/', views.otp_validate, name='otp_validate'),
+    path('login_with_otp/', views.otp_generate, name='login_with_otp'),
+    path('otp_validate/<int:id>/<int:otp>', views.otp_validate, name='otp_validate'),
     path('user_profile/', views.user_profile, name='user_profile'),
     path('userlogout/',views.userlogout, name='userlogout'),
     
@@ -29,11 +29,14 @@ urlpatterns = [
     path('delete_address/<int:id>/', views.delete_address, name='delete_address'),
     
 
-    
-    
     path('user_payment/<int:id>/', views.user_payment, name='user_payment'),
     path('paypal/', views.paypal, name= 'paypal'),
     path('razorpay/', views.razorpay, name='razorpay'),
-    path('order_history/', views.order_history, name='order_history')
+    path('order_history/', views.order_history, name='order_history'),
+
+
+    path('view_coupon/', views.view_coupon, name='view_coupon'),
+    path('check_coupon/', views.check_coupon, name='check_coupon'),
+    path('search/', views.search, name= 'search')
     
 ]

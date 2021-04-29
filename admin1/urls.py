@@ -32,6 +32,11 @@ urlpatterns = [
     
     
     path('admin_reports/', views.admin_reports, name='admin_reports'),
-    # path('admin_sub_reports/<str:status>', views.admin_sub_reports, name='admin_sub_reports')
-    # path('add_coupon/', views.add_coupon, name = 'add_coupon')
+    path('admin_sub_reports/<str:status>', views.admin_sub_reports, name='admin_sub_reports'),
+    path('add_coupon/', views.add_coupon, name = 'add_coupon'),
+    path('view_offer/', views.view_offer, name= 'viwe_offer'),
+    path('delete_coupon/', views.delete_coupon, name='delete_coupon'),
+    path('add_offer/', views.add_offer, name='add_offer'),
+    path('delete_offer/<int:id>/', views.delete_offer, name='delete_offer')
+
 ]

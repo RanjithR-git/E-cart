@@ -5,18 +5,33 @@ from django.http import JsonResponse
 from django.contrib import messages
 from admin1.models import product, Categories
 from . models import *
+from twilio.rest import Client
 import datetime
 import razorpay
 import json
+import random
+from admin1.models import *
+from django.core.files import File
 # Create your views here.
 
 def home(request):
     if request.user.is_authenticated:
+        if  Offer.objects.exists():
+            offer = Offer.objects.all()
+            for offers in offer:
+                if offers.is_started == True:
+                    offers.start = True
+                    offers.save()
+                if offers.is_valid == True:
+                    offers.start = False
+                    offers.save()
         prod = product.objects.all()
         user = request.user
         cart = Cart.objects.filter(user=user)
         item_count = cart.count()
-        return render(request, 'index.html',{'products':prod , 'no':item_count})
+        offer = Offer.objects.all() 
+        context = {'products':prod , 'no':item_count, 'offers':offer}
+        return render(request, 'index.html', context)
     else:
         return redirect(userlogin)
 
@@ -67,58 +82,59 @@ def userregister(request):
 def createuser(request):
     return render(request, 'registered.html')
 
-def login_with_otp(request):
-    return render(request, 'otp.html')
+def contact(request):
+    return render(request, 'mail.html')
+
+# def login_with_otp(request):
+#     return render(request, 'otp.html')
 
 def otp_generate(request):
-    if request.user.is_authenticated:
-        print('hello')
         if request.method == 'POST':
             print('world12345')
-            phone = request.POST['phone']
+            phone = request.POST['Phone']
+            print(phone)
             user1 = UserData.objects.get(phone=phone)
-            User= user1.user
-            print(User)
-            request.session['phone'] = phone
+            print(user1) 
             if user1 is not None:
                 print('world')
                 random_number = random.randint(1000, 9999)
-                global otp
                 otp = random_number
-                print(phone)
-                account_sid = 'AC06cf3ca85385371b53b23d4fb20fa036'
-                auht_token = 'fb55e5b4442db3d2a35e59c80d51c136'
+                print(otp)
+                account_sid = 'AC662ca35ca062115f93bfcdef4c9d0846'
+                auht_token = 'da644d6f37b02d85e8f763913c18c591'
                 client = Client(account_sid, auht_token)
 
-                message = client.message.create(
-                    body=f"You OTP is {otp}",
-                    from_='+17149301536',
-                    to=f'+916282936599'
-                )
+                message = client.messages.create(
+                body=f"Your OTP is {otp}",
+                from_='+18034898307',
+                to=f'+919645513754'
+            )
                 print(message.sid)
                 print(otp)
-                return redirect(otp_validate)
-    else:
-        return redirect(login_with_otp)
+                context = { 'user':user1, 'otp':otp}
+                return render(request, 'otp.html', context)
+        else:
+            return render(request, 'otp.html')
 
-def otp_validate(request):
+def otp_validate(request, id, otp):
     if request.method =='POST':
-        phone = request.session['phone']
-        print(phone)
-        user1 = UserData.objects.get(phone=phone)
-        User = user1.user
-        print(User)
-        print(user1)
-        user_otp = request.POST['otp']
+        # phone = request.session['phone']
+        # print(phone)
+        # user1 = UserData.objects.get(phone=phone)
+        customer = UserData.objects.get(id=id)
+        user = customer.user
+
+        print(customer)
+        user_otp = request.POST['userOTP']
         print(user_otp)
-        global otp
         print(otp)
         print(type(otp), type(user_otp))
         if otp == int(user_otp):
             print('hai')
-            auth.login(request, User)
+            auth.login(request, user)
             return redirect(home)
-        return redirect(otp_generate)
+        else:
+            return redirect(otp_generate)
     else:
         return render(request, 'otp.html')
 
@@ -171,9 +187,9 @@ def add_to_cart(request, id):
         if request.method == 'POST':
             quantity = request.POST['quantity']
             user = request.user
-            products = product.objects.get(id=id)
-            print(quantity, products)
-            Cart.objects.create(quantity=quantity, product=products, user=user)
+            cart_product = product.objects.get(id=id)
+            print(quantity, cart_product)
+            Cart.objects.create(quantity=quantity, cart_product=cart_product, user=user)
             return JsonResponse('true', safe=False)
         else:
             return JsonResponse('true', safe=False)
@@ -184,17 +200,17 @@ def show_cart(request):
     if request.user.is_authenticated:
         user = request.user
         cart = Cart.objects.filter(user=user)
-        grandtotal = 0
         print(cart.count())
+        grandtotal = 0
         for item in cart:
-            item.totalprice = item.quantity * item.product.price
-            grandtotal= grandtotal + item.totalprice
-        products = product.objects.all()
+            print(item)
+            item.totalprice = item.quantity * item.cart_product.price
+            grandtotal += item.totalprice
         item_count = cart.count()
         if item_count == 0:
-            return render(request, 'usercart.html', {'products': products, 'no': item_count})
+            return render(request, 'usercart.html', { 'no': item_count})
         else:
-            return render(request, 'usercart.html', {'cart': cart, 'products': products, 'no': item_count, 'grandtotal': grandtotal})
+            return render(request, 'usercart.html', {'cart': cart, 'no': item_count, 'grandtotal': grandtotal})
     
     else:
         return redirect(home)
@@ -217,18 +233,18 @@ def edit_cart(request):
     if request.POST["value"] == "add":
         item.quantity = item.quantity + count
         item.save()
-        price = item.product.price * item.quantity
+        price = item.cart_product.price * item.quantity
 
         for item in cart:
-            grandtotal= grandtotal + item.product.price * item.quantity
+            grandtotal= grandtotal + item.cart_product.price * item.quantity
     
     elif request.POST["value"] == "sub":
         item.quantity = item.quantity - count
         item.save()
-        price = item.product.price * item.quantity
+        price = item.cart_product.price * item.quantity
 
         for item in cart:
-            grandtotal = grandtotal + item.product.price * item.quantity
+            grandtotal = grandtotal + item.cart_product.price * item.quantity
 
     return JsonResponse({'total':price, 'grandtotal':grandtotal}, safe=False)
     
@@ -309,15 +325,16 @@ def user_payment(request, id):
             cart = Cart.objects.filter(user=user)
             status = 'pending'
             for item in cart:
-                item.totalprice= item.quantity * item.product.price
+                item.totalprice= item.quantity * item.cart_product.price
                 grandtotal = grandtotal + item.totalprice
             
             for item in cart:
-                Purchase.objects.create(user=user, address=address, products=item.product, quantity=item.quantity, totalprice=item.product.price * item.quantity, tdate=date,  tid=trans_id, payment_mode=mode, order_status='pending', payment_status=status)
-                item.product.quantity = item.product.quantity - item.quantity
-                item.product.save()
+                Purchase.objects.create(user=user, address=address, products=item.cart_product, quantity=item.quantity, totalprice=item.cart_product.price * item.quantity, tdate=date,  tid=trans_id, payment_mode=mode, order_status='pending', payment_status=status)
+                item.cart_product.quantity = item.cart_product.quantity - item.quantity
+                item.cart_product.save()
             cart.delete()
-
+             
+            
             if mode == 'COD':
                 mode = "COD"
                 messages.info(request, "Order placed Successfully")
@@ -330,16 +347,50 @@ def user_payment(request, id):
             elif mode == 'Razorpay':
                 mode = 'Razorpay'
                 return JsonResponse({'mode':mode, 'tid': trans_id}, safe=False)
+            
+            else:
+                coupon = Coupons.objects.get(user=user)
+                coupon.used = False
+                coupon.save()
+                del request.session['price']
+                return JsonResponse('false', safe=False)
+
+
         else:
             user= request.user
-            address = Address.objects.filter(id=id)
+            address = Address.objects.get(user=request.user)
             cart= Cart.objects.filter(user=user)
             item_count = cart.count()
             grandtotal = 0
             for item in cart:
-                item.totalprice = item.quantity * item.product.price
+                item.totalprice = item.quantity * item.cart_product.price
                 grandtotal = grandtotal + item.totalprice
-            return render(request, 'user_payment.html', {'cart':cart, 'no':item_count, 'grandtotal':grandtotal, 'address':address})
+
+            if  Coupons.objects.filter(user=user).exists():
+                if request.session.has_key('coupon'):
+                    print('coupon applied')
+                    code = request.session['coupon']
+                    coupon = Coupons.objects.get(code=code, user=user)
+                    discount = int(coupon.percent)
+                    discount_price = grandtotal - (grandtotal*(discount/100))
+                    paypal_price = discount_price/70
+                    razorpay_price = discount_price*100
+                    context = {'cart':cart, 'no':item_count, 'grandtotal':grandtotal, 'address':address,'price':discount_price,'discount':True, 'paypal_price':paypal_price, 'razorpay_price':razorpay_price}
+                    return render(request, 'user_payment.html',context)
+                else:
+                    print('has coupon')
+                    user= request.user
+                    coupon = Coupons.objects.filter(user=user)
+                    paypal_price=grandtotal/70
+                    razorpay_price = grandtotal*100
+                    context = {'cart':cart, 'no':item_count, 'grandtotal':grandtotal, 'address':address,'price':grandtotal, 'coupon':coupon, 'coupon_exist':True, 'paypal_price': paypal_price, 'razorpay_price':razorpay_price}
+                    return render(request, 'user_payment.html', context)
+            else:
+                print('no coupon')
+                paypal_price=grandtotal/70
+                razorpay_price = grandtotal*100
+                context = {'cart':cart, 'no':item_count, 'grandtotal':grandtotal, 'address':address,'price':grandtotal, 'paypal_price':paypal_price, 'razorpay_price':razorpay_price}
+                return render(request, 'user_payment.html', context)
     else:
         return redirect(home)
 
@@ -368,5 +419,63 @@ def order_history(request):
         item_count = cart.count()
         return render(request, 'user_order_history.html',{'items_data':purchases, 'no':item_count})
 
+def view_coupon(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            return redirect(home)
+        else:
+            user = request.user
+            if Coupons.objects.filter(user=user).exists():
+                coupon = Coupons.objects.filter(user=user, end__gt=date.today())
+                context = {'coupons':coupon}
+                return render(request, 'view_coupon.html', context)
+            else:
+                return render(request, 'view_coupon.html')
+    else:
+        return redirect(home)
 
-    
+def check_coupon(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            check_code = request.POST['check_code']
+            user = request.user
+            if Coupons.objects.filter(code = check_code, user=user).exists():
+                coupon = Coupons.objects.get(code=check_code, user=user)
+                if coupon.start <= date.today() and coupon.end >= date.today():
+                    if coupon.used == False:
+                        coupon.used = True
+                        coupon.save()
+                        request.session['coupon'] = check_code
+                        return JsonResponse('true', safe=False)
+                    else:
+                        return JsonResponse('used', safe= False)
+                else:
+                    return JsonResponse('date',safe= False) 
+            else:
+                return JsonResponse('false', safe=False)
+        else:
+            return redirect(home)
+    return redirect(home)   
+
+def search(request):
+    if request.user.is_authenticated:
+        key = request.GET['key']
+        prod1 = product.objects.filter(product_name__icontains = key)
+        prod2 = product.objects.filter(category__category__icontains = key)
+        print(prod1,prod2)
+        exist = True
+        procucts = []
+        for ad  in prod1:
+            procucts.append(ad)
+        
+        for ad in prod2:
+            if ad in procucts:
+                pass
+            else:
+                procucts.append(ad)
+        context = {
+            'products':procucts
+        }
+        return render(request, 'filter.html',context)
+    return redirect(home)
+        

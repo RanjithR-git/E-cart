@@ -1,0 +1,52 @@
+{% extends 'base1.html' %}
+{% load static %}
+{% block content %}
+
+<div class="row">
+    <div class="col-md-3 col-sm-3 ">
+        <div class="col-md-3 col-sm-3  animated wow float-right " data-wow-delay=".1s" style="margin-top: 2em;margin-bottom: 2em;">
+            <div class="col-md-4  item-grid simpleCart_shelfItem">
+               
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>
+<div class="col-md-9 col-sm-9 ">
+    <div class="col-md-9 col-sm-9  animated wow float-right " data-wow-delay=".1s" style="margin-top: 2em;margin-bottom: 2em;">
+        {% if exist == False %}
+        <h1>No Ads as per your request</h1>
+        {% else %}
+            {% for product in products %}
+                <div class="col-md-4 col-sm-6 item-grid simpleCart_shelfItem">
+                    <div class="grid-pro" style="height: 15em;width: 12em;margin: 2em;">
+                        <div  class=" grid-product " >
+                            <figure>		
+                                <h3>{{product.id}}</h3>
+                                <img  src="{{product.ImageURL}}" class="img-responsive" alt="">
+                            <h4>{{product.product_name}}</h4>
+                            <h3>Price:{{product.price}}</h3>
+                            <b>{{product.desc}}</b>
+                                		
+                            </figure>	
+                            
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+        <div class="clearfix"></div>
+    </div>
+</div>
+</div>
+
+{% for ad in  products %}
+{% if ad.active == True%}
+    <script>
+        var number = parseFloat('{{ad.price}}');
+        var result="₹ " + number.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '/-';
+        document.getElementById("{{ad.id}}").textContent= result ;
+
+    </script>
+{% endif %}
+{% endfor %}
+{% endblock %}

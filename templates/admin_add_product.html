@@ -147,51 +147,56 @@ body {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/0.8.1/cropper.min.js"></script>
 
 <script type="text/javascript">
-    $(document).ready(function(){
-        {% for message in messages %}
-        
-
-        var $messageDiv = $('#greendisp');
-        $messageDiv.show().html('{{message}}');
-        setTimeout(function(){ $messageDiv.hide().html('');}, 5000);
-        {% endfor %}
+ 
+    $( document ).ready(function() {
+     
+      {% for message in messages %}
+      
+      var $messageDiv = $('#greendisp'); // get the reference of the div
+      $messageDiv.show().html('{{message}}'); // show and set the message
+      setTimeout(function(){ $messageDiv.hide().html('');}, 5000);
+      {% endfor %}
     });
 
     let result = document.querySelector('.result'),
-    save = document.querySelector('.save'),
-    cropped = document.querySelector('.imageview'),
-    upload = document.querySelector('#fileInput'),
-    cropper = '';
+      save = document.querySelector('.save'),
+      cropped = document.querySelector('.imageview'),
+      upload = document.querySelector('#fileInput'),
+      cropper = '';
 
     upload.addEventListener('change', (e) => {
-        if (e.target.files.length){
-            const reader = new FileReader();
-            reader.onload = (e) =>{
-                if (e.target.result){
-                    $("#exampleModalCenter").modal("show");
-                    let img = document.createElement('img');
-                    img.id = 'image';
-                    img.src = e.target.result
-                    result.innerHTML = '';
-                    result.appendChild(img);
-                    cropper = new Cropper(img);
-                }
-            };
-            reader.readAsDataURL(e.target.files[0]);
-        }
+      if (e.target.files.length) {
+        // start file reader
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (e.target.result) {
+            // create new image
+            $("#exampleModalCenter").modal("show");
+            let img = document.createElement('img');
+            img.id = 'image';
+            img.src = e.target.result
+            // clean result before
+            result.innerHTML = '';
+            // append new image
+            result.appendChild(img);
+            // init cropper
+            cropper = new Cropper(img);
+          }
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      }
     });
+
     save.addEventListener('click', (e) => {
-        e.preventDefault();
-
-        let imgSrc = cropper.getCroppedCanvas({
-            width: 300
-        }).toDataURL();
-        $("#exampleModalCenter").modal("hide");
-        Imageview.src = imgSrc;
-        console.log(imgSrc)
-        $('#pro_img').val(imgSrc)
-
+      e.preventDefault();
+      // get result to data uri
+      let imgSrc = cropper.getCroppedCanvas({
+        width: 300 // img disp value
+      }).toDataURL();
+      $("#exampleModalCenter").modal("hide");
+      imageview.src = imgSrc;
+      $('#pro_img').val(imgSrc)
     });
-
-</script>
+    
+  </script>
 {% endblock %}

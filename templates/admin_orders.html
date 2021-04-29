@@ -41,8 +41,8 @@
                      <td>{{purchased.purchasedprice}}</td>
                       <td>
                           <div>
-                          <a href="/admin1/confirm_order/{{purchased.tid}}/" class="confirm" title="confirm" data-toggle="tooltip"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;&nbsp;<i class="fa fa-times" aria-hidden="true"></i></a>
-                          <a href="/admin1/cancel_order/{{purchased.tid}}/" class="cancel" title="Cancel" data-toggle="tooltip"><i Onclick= "return confirm('Are you sure you want to cancel order of transaction id:{{id}} ?')" style="color: red;" class="fas fa-window-close"></i></a>
+                          <a href="/admin1/confirm_order/{{purchased.tid}}" class="confirm" title="confirm" data-toggle="tooltip"><i Onclick= "return confirm('Are you sure you want to confirm order of transaction id:{{id}} ?')" class="fa fa-check" aria-hidden="true"></i>&nbsp;&nbsp;<i class="fa fa-times" aria-hidden="true"></i></a>
+                          <a href="/admin1/cancel_order/{{purchasesd.tid}}" class="cancel" title="Cancel" data-toggle="tooltip"><i Onclick= "return confirm('Are you sure you want to cancel order of transaction id:{{id}} ?')" style="color: red;" class="fas fa-window-close"></i></a>
                         </div>
                         </td>
                        

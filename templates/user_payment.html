@@ -115,7 +115,6 @@ span.price {
     <div class="container" >
 
         <div class="row">
-          {% for address in address%}
           <div class="col-50">
             <form >
             <h3>Billing Address</h3>    
@@ -140,7 +139,6 @@ span.price {
                 <input type="text" id="zip"  name="pincode" value="{{address.pincode}}" placeholder="695643"required>
               </div>
 
-          {% endfor %}
           
         </div>
         <p>Payment Method :</p>
@@ -155,6 +153,17 @@ span.price {
         <label for="razorpay">RazorPay</label><br>
 
       </div>
+      {% if coupon_exist == True %}
+      <div class="form-group" onclick="coupen()" ><br>
+        <label for="exampleInputEmail1">Apply Coupen</label><i class="fa fa-angle-double-down" aria-hidden="true"></i>
+      </div>
+      <div id="coupen_div" style="visibility: hidden;">
+        <input type="text" name="check_coupen" id="check_coupen" placeholder="Enter the code">
+        <button type="button" id="coupen_button" >Apply code</button>
+      </div>
+      <span id="span" style="color: red;"></span>
+      <br>
+    {% endif %}
       <div style="text-align: center;">      
         <span id="invalid" style="float: right; color: red; font-weight: bold; font-size: medium;"></span>        
       </div>
@@ -172,11 +181,15 @@ span.price {
     <div class="container">
       <h4>Cart <span class="price" style="color:black"><i class="fa fa-shopping-cart"></i> <b>{{no}}</b></span></h4>
       {% for item in cart %}
-      <p><a href="#">{{item.product.product_name}}</a> <span class="price">{{item.totalprice}}</span></p>
+      <p><a href="#">{{item.cart_product.product_name}}</a> <span class="price">{{item.totalprice}}</span></p>
       
       {% endfor %}
       <hr>
-      <p>Total <span class="price" style="color:black"><h2><b>{{grandtotal}}</b></h2></span></p>
+      {% if discount == True %}
+        <p>Total <span class="price" style="color:black"><h2><b>{{price}}</b></h2></span></p>
+      {% else %}
+       <p>Total <span class="price" style="color:black"><h2><b>{{grandtotal}}</b></h2></span></p>
+      {% endif %}
     </div>
   </div>
 </div>
@@ -316,6 +329,45 @@ crossorigin="anonymous"
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
+  function coupen(){
+    $('#coupen_div').css({'visibility': 'visible'})
+}
+$('#coupen_button').click(function(){
+  console.log('hi')
+    var code = $('#check_coupen').val()
+    var data = {
+    'csrfmiddlewaretoken':'{{csrf_token}}',
+    'check_code':code
+    }
+    if(code == ''){
+      $('#span').html('Enter the code')
+    }else{
+        console.log('hi')
+        $.ajax({
+            url:'/check_coupon/',
+            method:'POST',
+            data:data,
+            dataType:'json',
+            success:function(data){
+            if(data=='true'){
+              window.location.replace('/user_payment/{{address.id}}/')
+            }
+            if(data=='false'){
+                $('#span').html('Incorrect code')
+            }
+            if(data=='used'){
+                $('#span').html('Code is Used')
+            }
+            if(data=='date'){
+                $('#span').html('Coupon not valid')
+            }
+            }
+        })
+    }
+
+
+})
+
     function razorpay(){
         var payment_status = 'razorpay'
         var options = {

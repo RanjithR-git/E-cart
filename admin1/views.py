@@ -11,6 +11,7 @@ from django.core.files import File
 from datetime import date, datetime, timedelta
 from PIL import Image
 import base64
+import calendar
 from django.core.files.base import ContentFile
 from django.core.files.storage import FileSystemStorage
 # Create your views here.
@@ -32,11 +33,51 @@ def adminlogin(request):
 
 def adminhome(request):
     if request.session.has_key('password'):
-        if request.method=='POST':
-            pass
-        else:
-            user = UserData.objects.all()
-            return render(request, 'adminhome.html', {'user':user}) 
+        user = User.objects.all().count()
+        products = product.objects.all().count()
+        purchase = Purchase.objects.all().count()
+        tdate_month = Purchase.objects.filter(tdate__month=datetime.now().month)
+        m1 = datetime.now().month
+        m2 = m1 -1
+        m3 = m2 - 1
+        m4 = m3 - 1 
+        m5 = m4 - 2
+        month1 = Purchase.objects.filter(tdate__month = m1).count()
+        month2 = Purchase.objects.filter(tdate__month = m2).count()
+        month3 = Purchase.objects.filter(tdate__month = m3).count()
+        month4 = Purchase.objects.filter(tdate__month = m4).count()
+        month5 = Purchase.objects.filter(tdate__month = m5).count()
+
+        y1 = datetime.now().year
+        y2 =  y1 - 1
+        y3 =  y2 - 1
+        y4 = y3 - 2
+        y5 = y4 -1 
+
+        year1 = Purchase.objects.filter(tdate__year = y1).count()
+        year2 = Purchase.objects.filter(tdate__year = y2).count()
+        year3 = Purchase.objects.filter(tdate__year = y3).count()
+        year4 = Purchase.objects.filter(tdate__year = y4).count()
+        year5 = Purchase.objects.filter(tdate__year = y5).count()
+
+        products = product.objects.all().count()
+        context = {
+            'user':user,
+            'products': products,
+            'purchase': purchase,
+            'm1':month1, 'm2':month2, 'm3':month3, 'm4':month4, 'm5':month5,
+            'first_month': calendar.month_name[m1], 'second_month': calendar.month_name[m2],
+            'third_month': calendar.month_name[m3], 'fourth_month': calendar.month_name[m4],
+            'fifth_month': calendar.month_name[m5],
+            'y1': year1, 'y2':year2, 'y3':year3, 'y4':year4, 'y5':year5,'y01': y1, 'y02': y2, 'y03': y3, 'y04': y4,
+            'y05': y5,
+        }
+        return render(request, 'adminhome.html', context)
+        # if request.method=='POST':
+        #     pass
+        # else:
+        #     user = UserData.objects.all()
+        #     return render(request, 'adminhome.html', {'user':user}) 
     else:
         return redirect(adminlogin)
 
@@ -150,7 +191,7 @@ def create_product(request):
         image_data = request.POST['pro_img']
         format, imgstr = image_data.split(';base64,')
         ext = format.split('/')[-1]
-        print('hai',ext)
+        
         
         img_decoded = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
 
@@ -242,9 +283,9 @@ def admin_sub_orders(request, status):
 
 def cancel_order(request, tid):
     if request.session.has_key('password'):
-        Purchases = Purchase.objects.filter(tid=tid)
-        for items in Purchases:
-            items.purchase_status = 'Cancelled'
+        purchases = Purchase.objects.filter(tid=tid)
+        for items in purchases:
+            items.order_status = 'Cancelled'
             items.save()
         return redirect(admin_orders)
     else:
@@ -252,11 +293,11 @@ def cancel_order(request, tid):
 
 def confirm_order(request, tid):
     if request.session.has_key('password'):
-        Purchases = Purchase.objects.filter(tid=tid)
-        for items in Purchases:
-            items.purchase_status = 'Confirmed'
+        purchases = Purchase.objects.filter(tid=tid)
+        for items in purchases:
+            items.order_status = 'Confirmed'
             items.save()
-        return redirect(admin_sub_orders)
+        return redirect(admin_orders)
     else:
         return redirect(adminlogin)
 
@@ -412,25 +453,97 @@ def admin_reports(request):
     else:
         return redirect(adminlogin)    
 
-# def admin_sub_reports(request, status):
-#     if status == 'Confirm':
-#         purchases = Purchase.objects.filter(order_status= status)
-#         purchase_sorted_tid = {}
-#         for purchased in purchases:
-#             if purchased.tid in purchases_tid.keys():
-#                 purchase_sorted_tid [purchased.tid] = purchased
-#                 purchase_sorted_tid [purchased.tid].purchasedprice = purchased.totalprice
-#             else:
-#                 purchase_sorted_tid [purchased.tid]. purchasedprice += purchased.totalprice
-#         return render(request, 'admin_sub_reports.html', {'table_data' : purchase_sorted_tid, 'heading': status})
+def admin_sub_reports(request, status):
+    if status == 'Confirm':
+        purchases = Purchase.objects.filter(order_status= status)
+        purchase_sorted_tid = {}
+        for purchased in purchases:
+            if purchased.tid in purchases_tid.keys():
+                purchase_sorted_tid [purchased.tid] = purchased
+                purchase_sorted_tid [purchased.tid].purchasedprice = purchased.totalprice
+            else:
+                purchase_sorted_tid [purchased.tid]. purchasedprice += purchased.totalprice
+        return render(request, 'admin_sub_reports.html', {'table_data' : purchase_sorted_tid, 'heading': status})
     
-#     elif status == 'Cancelled':
-#         purchases = Purchase.objects.filter(order_status=status)
-#         purchase_sorted_tid = {}
-#         for purchased in purchases:
-#             if purchase.tid in purchase_tid.keys():
-#                 purchase_sorted_tid [purchased.tid] = purchased
-#                 purchase_sorted_tid [purchased.tid].purchasedprice = purchased.totalprice
-#             else:
-#                 purchase_sorted_tid[purchased.tid].purchasedprice += purchased.totalprice
-#         return render(request, 'admin_sub_reports.html', {'table_data': purchase_sorted_tid, 'heading':status})
+    elif status == 'Cancelled':
+        purchases = Purchase.objects.filter(order_status=status)
+        purchase_sorted_tid = {}
+        for purchased in purchases:
+            if purchase.tid in purchase_tid.keys():
+                purchase_sorted_tid [purchased.tid] = purchased
+                purchase_sorted_tid [purchased.tid].purchasedprice = purchased.totalprice
+            else:
+                purchase_sorted_tid[purchased.tid].purchasedprice += purchased.totalprice
+        return render(request, 'admin_sub_reports.html', {'table_data': purchase_sorted_tid, 'heading':status})
+
+def add_coupon(request):
+    if request.session.has_key('password'):
+        if request.method == 'POST':
+            coupen_name = request.POST['coupen_name']
+            coupen_code = request.POST['coupen_code']
+            percent = request.POST['percent']
+            from_date = request.POST['from_date']
+            to_date = request.POST['to_date']
+            user = User.objects.all()
+            if Coupons.objects.filter(code=coupen_code).exists():
+                return JsonResponse('exists', safe=False)
+            else:
+                for users in user:
+                    Coupons.objects.create(user=users,coupen_name=coupen_name, code=coupen_code, percent=percent, start=from_date, end=to_date)
+                return JsonResponse('true', safe=False)
+        else:
+            return render(request, 'coupons.html')
+    else:
+        return redirect(adminlogin)
+            
+
+def view_offer(request):
+    if request.session.has_key('password'):
+        offer = Offer.objects.all()
+        if Coupons.objects.exists():
+            user = User.objects.filter().first()
+            coupon = Coupons.objects.filter(user=user)
+            context = {'offers':offer, 'coupons':coupon, 'coupon_extist':True}
+        else:
+            context = {'offers':offer}
+
+        return render(request, 'view_offer.html', context)
+
+def delete_coupon(request):
+    if request.session.has_key('password'):
+        user = User.objects.all()
+        for users in user:
+            coupon = Coupons.objects.filter(user=users)
+            coupon.delete()
+        return redirect(view_offer)
+    else:
+        return redirect(adminlogin)
+
+def add_offer(request):
+    if request.session.has_key('password'):
+        if request.method == 'POST':
+            name = request.POST['name']
+            categorys = request.POST['category']
+            discount = request.POST['discount']
+            start_date = request.POST['start_date']
+            end_date = request.POST['end_date']
+            category = Categories.objects.get(id=categorys)
+            if Offer.objects.filter(category=category).exists():
+                return JsonResponse('false', safe = False)
+            else:
+                Offer.objects.create(category=category, name=name, discount=discount, start_date=start_date, end_date=end_date)
+                return JsonResponse('true', safe= False)
+        else:
+            category = Categories.objects.all()
+            context ={'category':category}
+            return render(request, 'add_offer.html', context)
+    else:
+        return redirect(adminlogin)
+
+def delete_offer(request, id):
+    if request.session.has_key('password'):
+        offer = Offer.objects.get(id=id)
+        offer.delete()
+        return redirect(view_offer)
+    else:
+        return redirect(adminlogin)
