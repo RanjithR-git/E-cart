@@ -90,16 +90,12 @@ def contact(request):
 
 def otp_generate(request):
         if request.method == 'POST':
-            print('world12345')
+            
             phone = request.POST['Phone']
-            print(phone)
             user1 = UserData.objects.get(phone=phone)
-            print(user1) 
             if user1 is not None:
-                print('world')
                 random_number = random.randint(1000, 9999)
                 otp = random_number
-                print(otp)
                 account_sid = 'AC662ca35ca062115f93bfcdef4c9d0846'
                 auht_token = 'da644d6f37b02d85e8f763913c18c591'
                 client = Client(account_sid, auht_token)
@@ -109,8 +105,7 @@ def otp_generate(request):
                 from_='+18034898307',
                 to=f'+919645513754'
             )
-                print(message.sid)
-                print(otp)
+               
                 context = { 'user':user1, 'otp':otp}
                 return render(request, 'otp.html', context)
         else:
@@ -119,18 +114,14 @@ def otp_generate(request):
 def otp_validate(request, id, otp):
     if request.method =='POST':
         # phone = request.session['phone']
-        # print(phone)
         # user1 = UserData.objects.get(phone=phone)
         customer = UserData.objects.get(id=id)
         user = customer.user
 
-        print(customer)
+        
         user_otp = request.POST['userOTP']
-        print(user_otp)
-        print(otp)
-        print(type(otp), type(user_otp))
+        
         if otp == int(user_otp):
-            print('hai')
             auth.login(request, user)
             return redirect(home)
         else:
@@ -188,7 +179,7 @@ def add_to_cart(request, id):
             quantity = request.POST['quantity']
             user = request.user
             cart_product = product.objects.get(id=id)
-            print(quantity, cart_product)
+            
             Cart.objects.create(quantity=quantity, cart_product=cart_product, user=user)
             return JsonResponse('true', safe=False)
         else:
@@ -200,10 +191,8 @@ def show_cart(request):
     if request.user.is_authenticated:
         user = request.user
         cart = Cart.objects.filter(user=user)
-        print(cart.count())
         grandtotal = 0
         for item in cart:
-            print(item)
             item.totalprice = item.quantity * item.cart_product.price
             grandtotal += item.totalprice
         item_count = cart.count()
@@ -218,7 +207,6 @@ def show_cart(request):
 def delete_cart_item(request, id):
     if request.user.is_authenticated:
         cart =Cart.objects.filter(id=id)
-        print(cart)
         cart.delete()
         return redirect(show_cart)
     else:
@@ -255,7 +243,6 @@ def show_address(request):
         user = request.user
         cart = Cart.objects.filter(user=user)
         item_count = cart.count()
-        print(item_count)
         address = Address.objects.filter(user=user)
         return render(request, 'user_address.html', {'no':item_count, 'address':address})
     else:    
@@ -300,7 +287,6 @@ def edit_address(request, id):
 def delete_address(request, id):
     if request.user.is_authenticated:
         address = Address.objects.get(id=id)
-        print(address)
         address.delete()
         return redirect(show_address)
     else:
@@ -368,7 +354,6 @@ def user_payment(request, id):
 
             if  Coupons.objects.filter(user=user).exists():
                 if request.session.has_key('coupon'):
-                    print('coupon applied')
                     code = request.session['coupon']
                     coupon = Coupons.objects.get(code=code, user=user)
                     discount = int(coupon.percent)
@@ -378,7 +363,6 @@ def user_payment(request, id):
                     context = {'cart':cart, 'no':item_count, 'grandtotal':grandtotal, 'address':address,'price':discount_price,'discount':True, 'paypal_price':paypal_price, 'razorpay_price':razorpay_price}
                     return render(request, 'user_payment.html',context)
                 else:
-                    print('has coupon')
                     user= request.user
                     coupon = Coupons.objects.filter(user=user)
                     paypal_price=grandtotal/70
@@ -386,7 +370,6 @@ def user_payment(request, id):
                     context = {'cart':cart, 'no':item_count, 'grandtotal':grandtotal, 'address':address,'price':grandtotal, 'coupon':coupon, 'coupon_exist':True, 'paypal_price': paypal_price, 'razorpay_price':razorpay_price}
                     return render(request, 'user_payment.html', context)
             else:
-                print('no coupon')
                 paypal_price=grandtotal/70
                 razorpay_price = grandtotal*100
                 context = {'cart':cart, 'no':item_count, 'grandtotal':grandtotal, 'address':address,'price':grandtotal, 'paypal_price':paypal_price, 'razorpay_price':razorpay_price}
@@ -399,7 +382,6 @@ def paypal(request):
     purchases = Purchase.objects.filter(tid=tr_id)
     for purchase in purchases:
         purchase.payment_status = 'SUCCESS'
-        print(purchase)
         purchase.save()
     return JsonResponse('success', safe=False)
 
@@ -462,7 +444,6 @@ def search(request):
         key = request.GET['key']
         prod1 = product.objects.filter(product_name__icontains = key)
         prod2 = product.objects.filter(category__category__icontains = key)
-        print(prod1,prod2)
         exist = True
         procucts = []
         for ad  in prod1:
