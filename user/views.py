@@ -33,7 +33,10 @@ def home(request):
         context = {'products':prod , 'no':item_count, 'offers':offer}
         return render(request, 'index.html', context)
     else:
-        return redirect(userlogin)
+        prod = product.objects.all()
+        user = request.user
+        return render(request,'index.html', {'products':prod})
+
 
 def usersignup(request):
     if request.user.is_authenticated:
