@@ -26,7 +26,7 @@ SECRET_KEY = 'j=^3^-^5@(ne=rsu85)xv=fzqdfsk=cpbzz#n^iu8_!(xz&77r'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['18.117.104.52','e-cart.ranjith.xyz']
 
 
 # Application definition
@@ -80,7 +80,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'ecart',
-        'USER': 'postgres',
+        'USER': 'postgress',
         'PASSWORD': '1234',
         'HOST': 'localhost'
     }
