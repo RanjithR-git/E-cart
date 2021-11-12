@@ -26,7 +26,7 @@ SECRET_KEY = 'j=^3^-^5@(ne=rsu85)xv=fzqdfsk=cpbzz#n^iu8_!(xz&77r'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['18.218.109.80','e-cart.ranjith.xyz']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
